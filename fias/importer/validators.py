@@ -37,7 +37,7 @@ def stead_validator(item, today, **kwargs):
 validators = {
     'socrbase': socr_base_validator,
 
-    'addrobj': addrobj_validator,
+    'addrob': addrobj_validator,
     'house': common_validator,
     'houseint': common_validator,
     'landmark': common_validator,

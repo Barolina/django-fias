@@ -84,7 +84,7 @@ DATABASES = {
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'fias_2017',
+        'NAME': 'fias',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',

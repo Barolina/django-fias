@@ -38,8 +38,6 @@ class House(June2016Update):
     counter = models.IntegerField('Счетчик записей домов для КЛАДР 4')
 
 
-
-
 class HouseInt(Common):
     """
     Интервалы домов

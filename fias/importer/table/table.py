@@ -99,10 +99,9 @@ class Table(object):
     deleted = False
     iterator = TableIterator
 
-
     def __init__(self, filename, **kwargs):
         self.filename = filename
-        self.iterator = TableIterator
+
         name = kwargs['name'].lower()
 
         self.name = name_trans.get(name, name)

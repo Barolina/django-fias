@@ -60,6 +60,7 @@ def load_complete_data(path=None,
     pre_import.send(sender=object.__class__, version=tablelist.version)
 
     for tbl in get_table_names(tables):
+        print('ese')
         # Пропускаем таблицы, которых нет в архиве
         if tbl not in tablelist.tables:
             continue

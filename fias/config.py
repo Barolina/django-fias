@@ -49,15 +49,13 @@ weights.update(user_weights)
 
 FIAS_TABLE_ROW_FILTERS = {
     'addrobj': (
-        'fias.importer.filters.example_filter_okato',
+        'fias.importer.filters.example_filter_yaroslavl_region',
     ),
     'house': (
-        'fias.importer.filters.example_filter_okato',
+        'fias.importer.filters.example_filter_yaroslavl_region',
     ),
 }
-
 """
-
 row_filters = getattr(settings, 'FIAS_TABLE_ROW_FILTERS', {})
 TABLE_ROW_FILTERS = {}
 for flt_table, flt_list in row_filters.items():
