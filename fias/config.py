@@ -1,18 +1,25 @@
 # coding: utf-8
 from __future__ import unicode_literals, absolute_import
 
+import os
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.utils import DEFAULT_DB_ALIAS
 from django.utils.module_loading import import_module
 from fias.weights import weights
 
-_DEFAULT = ('normdoc', 'landmark', 'houseint', 'house')
+TABLES_STATS = (
+    'actstat', 'centerst', 'curentst',
+    'eststat', 'hststat', 'intvstat',
+    'ndoctype', 'operstat', 'strstat'
+)
+TABLES_DEFAULT = ('normdoc', 'landmark', 'house', 'houseint', 'room', 'stead')
 
-TABLES = ['socrbase', 'addrobj']
-TABLES.extend([x.lower() for x in list(getattr(settings, 'FIAS_TABLES', [])) if x.lower() in _DEFAULT])
+TABLES = TABLES_STATS + ('socrbase', 'addrob')
+TABLES += tuple(x.lower() for x in TABLES_DEFAULT if x.lower() in list(set(getattr(settings, 'FIAS_TABLES', []))))
 
-DELETED_TABLES = ('addrobj', 'house', 'houseint', 'normdoc')
+DELETED_TABLES = ('normdoc', 'addrobj', 'house', 'room', 'stead', 'houseint')
 
 
 DATABASE_ALIAS = getattr(settings, 'FIAS_DATABASE_ALIAS', DEFAULT_DB_ALIAS)
@@ -40,20 +47,41 @@ weights.update(user_weights)
 
 пример:
 
-FIAS_TABLE_ROW_FILTERS = [
-    'fias.importer.filters.example_filter_accept',
-]
+FIAS_TABLE_ROW_FILTERS = {
+    'addrobj': (
+        'fias.importer.filters.example_filter_okato',
+    ),
+    'house': (
+        'fias.importer.filters.example_filter_okato',
+    ),
+}
+
 """
-row_filters = getattr(settings, 'FIAS_TABLE_ROW_FILTERS', [])
-TABLE_ROW_FILTERS = []
-for flt_path in row_filters:
-    try:
-        flt = import_module(flt_path)
-    except ImportError:
-        raise ImproperlyConfigured('Table row filter module `{0}` does not exists'.format(flt_path))
-    else:
-        TABLE_ROW_FILTERS.append(flt)
+
+row_filters = getattr(settings, 'FIAS_TABLE_ROW_FILTERS', {})
+TABLE_ROW_FILTERS = {}
+for flt_table, flt_list in row_filters.items():
+    if flt_table in TABLES:
+        for flt_path in flt_list:
+            try:
+                module_name, _, func_name = flt_path.rpartition('.')
+                flt_module = import_module(module_name)
+                flt_func = getattr(flt_module, func_name)
+            except (ImportError, AttributeError):
+                raise ImproperlyConfigured('Table row filter module `{0}` does not exists'.format(flt_path))
+            else:
+                TABLE_ROW_FILTERS.setdefault(flt_table, []).append(flt_func)
 
 SUGGEST_BACKEND = getattr(settings, 'FIAS_SUGGEST_BACKEND', 'fias.suggest.backends.noop')
 SUGGEST_VIEW = getattr(settings, 'FIAS_SUGGEST_VIEW', 'fias:suggest')
 SUGGEST_AREA_VIEW = getattr(settings, 'FIAS_SUGGEST_AREA_VIEW', 'fias:suggest-area')
+
+# SUDS Proxy Support
+_http_proxy = os.environ.get('http_proxy')
+_https_proxy = os.environ.get('https_proxy')
+
+PROXY = {}
+if _http_proxy:
+    PROXY['http'] = _http_proxy
+if _https_proxy:
+    PROXY['https'] = _https_proxy

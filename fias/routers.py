@@ -13,19 +13,21 @@ class FIASRouter(object):
         return None
 
     def db_for_write(self, model, **hints):
-        if model._meta.app_label == 'fias':
-            return DATABASE_ALIAS
-        else:
-            """\
-            Странный хак, но без него
-            джанго не может правильно определить БД для записи\
-            """
-            try:
-                if hints['instance']._meta.object_name == 'AddrObj':
-                    return DEFAULT_DB_ALIAS
-            except KeyError:
-                pass
-        return None
+        return  DATABASE_ALIAS
+        #TODO: it
+        # if model._meta.app_label == 'fias':
+        #     return DATABASE_ALIAS
+        # else:
+        #     """\
+        #     Странный хак, но без него
+        #     джанго не может правильно определить БД для записи\
+        #     """
+        #     try:
+        #         if hints['instance']._meta.object_name == 'AddrObj':
+        #             return DEFAULT_DB_ALIAS
+        #     except KeyError:
+        #         pass
+        # return None
 
     def allow_relation(self, obj1, obj2, **hints):
         """\

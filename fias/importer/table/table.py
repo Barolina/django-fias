@@ -1,11 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals, absolute_import
 
-try:
-    from functools import reduce
-except ImportError:
-    pass  # Python 2 builtin reduce
-
 from django.db import connections, router
 
 from fias.config import TABLE_ROW_FILTERS
@@ -13,21 +8,39 @@ from fias.models import (
     AddrObj,
     House, HouseInt,
     LandMark,
-    NormDoc,
+    Room, Stead,
+    NormDoc, NDocType,
     SocrBase,
+
+    ActStat, CenterSt, CurentSt,
+    EstStat, HSTStat, IntvStat,
+    OperStat, StrStat,
 )
 
 table_names = {
-    'addrobj': AddrObj,
+    'addrob': AddrObj,
     'house': House,
     'houseint': HouseInt,
     'landmark': LandMark,
     'normdoc': NormDoc,
     'socrbase': SocrBase,
+
+    'actstat': ActStat,
+    'centerst': CenterSt,
+    'curentst': CurentSt,
+    'eststat': EstStat,
+    'hststat': HSTStat,
+    'intvstat': IntvStat,
+    'ndoctype': NDocType,
+    'operstat': OperStat,
+    'strstat': StrStat,
+    'room': Room,
+    'stead': Stead,
 }
 
 name_trans = {
     'nordoc': 'normdoc',
+    'housint': 'houseint',
 }
 
 
@@ -67,11 +80,11 @@ class TableIterator(object):
             return None
 
         item = self.model(**row)
-        for filter in TABLE_ROW_FILTERS:
+        for filter_func in TABLE_ROW_FILTERS.get(self.model._meta.model_name, tuple()):
+            item = filter_func(item)
+
             if item is None:
                 break
-
-            item = filter(item)
 
         return item
 
@@ -86,9 +99,10 @@ class Table(object):
     deleted = False
     iterator = TableIterator
 
+
     def __init__(self, filename, **kwargs):
         self.filename = filename
-
+        self.iterator = TableIterator
         name = kwargs['name'].lower()
 
         self.name = name_trans.get(name, name)

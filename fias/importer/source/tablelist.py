@@ -21,9 +21,10 @@ class TableList(object):
     date = None
     version_info = None
 
-    def __init__(self, src, version=None):
+    def __init__(self, src, version=None, tempdir=None):
         self.info_version = version
         self.src = src
+        self.tempdir = tempdir
 
         if version is not None:
             assert isinstance(version, Version), 'version must be an instance of Version model'
@@ -45,6 +46,7 @@ class TableList(object):
         if self.table_list is None:
             self.table_list = {}
             for filename in self.get_table_list():
+                print('table '+ filename)
                 table = TableFactory.parse(filename=filename)
                 if table is None:
                     continue

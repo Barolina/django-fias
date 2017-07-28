@@ -5,11 +5,11 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
 from django.template import Context
-from django.template.base import TemplateDoesNotExist
 from django.template.loader import select_template
 
+from fias.compat import TemplateDoesNotExist
 from fias.config import DATABASE_ALIAS
-from ..config import SPHINX_ADDROBJ_INDEX
+from ..config import SPHINX_ADDROBJ_INDEX, SEARCHD_CONNECTION
 import re
 
 connection = connections[DATABASE_ALIAS]
@@ -75,11 +75,17 @@ def render_sphinx_index(path):
 
     return _get_sphinx_template('index').render(Context(ctx))
 
+def render_sphinx_searchd_config():
+    ctx = {
+        'sphinx_host': SEARCHD_CONNECTION['HOST'],
+        'sphinx_port': SEARCHD_CONNECTION['PORT'],
+    }
+
+    return _get_sphinx_template('sphinx').render(Context(ctx))
 
 def render_sphinx_config(path, full=True):
     source = render_sphinx_source()
     index = render_sphinx_index(path)
-
-    config = _get_sphinx_template('sphinx').render(Context({})) if full else ''
+    config = render_sphinx_searchd_config() if full else ''
 
     return source, index, config

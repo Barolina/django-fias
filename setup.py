@@ -21,10 +21,10 @@ else:
 setup(
     name='django-fias',
     version=__version__,
-    author='Artem Vlasov',
+    author='Larisa',
     author_email='root@proscript.ru',
-    url='https://github.com/Yuego/django-fias',
-    download_url='https://github.com/Yuego/django-fias/archive/{0}.tar.gz'.format(__version__),
+    url='https://github.com/Barolina/django-fias',
+    download_url='https://github.com/Barolina/django-fias/archive/{0}.tar.gz'.format(__version__),
 
     description='FIAS Django integration',
     long_description=codecs.open('README.rst', encoding='utf8').read(),
