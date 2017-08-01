@@ -24,7 +24,6 @@ class AddressSelect2Widget(ModelSelect2Widget):
     def render_options(self, choices, selected_choices):
         if '' in selected_choices:
             selected_choices.pop(selected_choices.index(''))
-
         choices = ((obj.pk, obj.full_name(5, True)) for obj in self.queryset.filter(pk__in=selected_choices))
 
         return super(AddressSelect2Widget, self).render_options(choices, selected_choices)

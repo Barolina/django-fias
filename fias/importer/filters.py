@@ -26,14 +26,5 @@ def example_filter_yaroslavl_region(item):
     :param item:
     :return item or None:
     """
-    if (item.regioncode == '36') :
-        return item
-
-def example_filter_okato(item):
-    """
-    Всегда разрешает импорт записи
-    :param item:
-    :return item or None:
-    """
-    if (item.okato.startswith('20')) :
+    if item.regioncode == '76':
         return item

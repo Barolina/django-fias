@@ -52,6 +52,8 @@ class SocrBaseAdmin(admin.ModelAdmin):
 @admin.register(AddrObj)
 class AddrObjAdmin(ViewAdmin):
     list_display = ('offname', 'shortname', 'aolevel', 'code', 'aoguid')
+    list_filter = ('shortname',)
+    search_fields = ['shortname']
 
 
 @admin.register(House)
