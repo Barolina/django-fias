@@ -10,8 +10,8 @@ SPHINX_ADDROBJ_INDEX = DATABASE_ALIAS + '_' + SPHINX_ADDROBJ_INDEX_NAME
 
 
 SEARCHD_CONNECTION = {
-    'ENGINE': 'django.db.backends.mysql',
-    'HOST': '127.0.0.1',
-    'PORT': 9306,
+      'ENGINE': 'django.db.backends.mysql',
+      'HOST': '127.0.0.1',
+      'PORT': 9306,
 }
 SEARCHD_CONNECTION.update(getattr(settings, 'FIAS_SEARCHD_CONNECTION', {}))

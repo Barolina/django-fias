@@ -9,7 +9,7 @@ from django_select2.views import AutoResponseView
 
 from .config import SPHINX_ADDROBJ_INDEX, SEARCHD_CONNECTION
 from fias.models import AddrObj
-
+import MySQLdb
 connections.databases['fias_search'] = SEARCHD_CONNECTION
 
 
@@ -23,6 +23,9 @@ def dict_fetchall(cursor):
 
 
 class SphinxResponseView(AutoResponseView):
+
+    def __init__(self, host=None, port=None):
+        self.db = None
 
     def get(self, request, *args, **kwargs):
         """
@@ -60,18 +63,27 @@ class SphinxResponseView(AutoResponseView):
     def get_queryset(self):
 
         try:
-            cur = connections['fias_search'].cursor()
+            if not self.db:
+                self.db = MySQLdb.connect(host=SEARCHD_CONNECTION['HOST'], port=SEARCHD_CONNECTION['PORT'], charset='utf8')
+            cur = self.db.cursor()
+
+            #cur = connections['fias_search'].cursor()
 
             query = 'SELECT aoguid, fullname FROM {0} WHERE MATCH(%s) ORDER BY item_weight DESC, ' \
                     'weight() DESC LIMIT 0,50 OPTION field_weights=(' \
                     'formalname=100, fullname=80' \
                     ')'.format(SPHINX_ADDROBJ_INDEX)
-
-            cur.execute(query, (self.term + '*',))
+            try:
+                cur.execute(query, (self.term + '*',))
+            except:
+                cur.close()
+                return []
 
             return dict_fetchall(cur)
         except OperationalError:
             return []
+        finally:
+            cur.close()
 
 
 class GetAreasListView(BaseListView):

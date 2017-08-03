@@ -52,8 +52,7 @@ def get_indexed_fields(model):
 def change_indexes_for_model(model, field_from, field_to):
     con = connections[DATABASE_ALIAS]
     ed = con.schema_editor()
-    if field_to:
-        ed.alter_field(model, field_from, field_to)
+    ed.alter_field(model, field_from, field_to)
 
 
 def remove_indexes_from_model(model):
